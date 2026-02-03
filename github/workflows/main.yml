@@ -1,12 +1,40 @@
+name: Samsung WebLite Cloud Builder
+on:
+  workflow_dispatch: # يتيح لك تشغيل البناء يدوياً بضغطة زر
+    inputs:
+      dump_url:
+        description: 'رابط الـ Dump'
+        required: true
+        default: 'https://dumps.tadiphone.dev/dumps/samsung/r11s'
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
+      - name: Install Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full lz4 wget python3
+          # تحميل أدوات التفكيك الخاصة بنا
+          mkdir tools
+          wget -q https://github.com/osm0sis/MagiskBoot/raw/master/magiskboot -P ./tools
+          chmod +x ./tools/magiskboot
 
+      - name: Fetch and Unpack
+        run: |
+          echo "جاري جلب الملفات من السيرفر..."
+          wget -q ${{ github.event.inputs.dump_url }}/boot.img
+          ./tools/magiskboot unpack boot.img
+          echo "تم التفكيك بنجاح!"
 
-github/workflows/main.yml
-
-
-
-
-
-
-
+      - name: Upload Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: Unpacked-Kernel
+          path: |
+            kernel
+            ramdisk.cpio
+            dtb
