@@ -1,0 +1,32 @@
+name: Clone ExtremeKernel to Private Folder
+on:
+  workflow_dispatch: # لتشغيله يدوياً بضغطة زر
+
+jobs:
+  clone_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Your Repo
+        uses: actions/checkout@v4
+
+      - name: Create Isolated Folder and Clone
+        run: |
+          # 1. إنشاء المجلد الجديد المستقل
+          mkdir -p Project-Extreme-Kernel
+          cd Project-Extreme-Kernel
+          
+          # 2. جلب الكرنيل من المستودع المطلوب
+          git clone --depth 1 https://github.com/Ocin4ever/ExtremeKernel.git .
+          
+          # 3. تنظيف ملفات git الخاصة بالكرنيل المجلوب لكي لا تتدخل مع مستودعك الأصلي
+          rm -rf .git
+          
+          echo "✅ تم نسخ ExtremeKernel في مجلد مستقل بنجاح!"
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add Project-Extreme-Kernel/
+          git commit -m "إضافة ملفات ExtremeKernel إلى مجلد خاص"
+          git push
