@@ -1,0 +1,4 @@
+      - name: Clone ExtremeKernel
+        run: |
+          git clone https://github.com/Ocin4ever/ExtremeKernel.git
+          echo "✅ تم نسخ الكرنيل بنجاح إلى السيرفر السحابي"
